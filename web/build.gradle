@@ -1,0 +1,29 @@
+plugins {
+    id 'org.springframework.boot' version "${springBootVersion}"
+    id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
+    id 'war'
+}
+
+group = 'com.epam'
+version = '1.0'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.0'
+
+    implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
+
+    compile group: 'com.github.javafaker', name: 'javafaker', version: "${javaFakerVersion}"
+    implementation project (':persistence')
+    implementation project (':service')
+}
+
+test {
+    useJUnitPlatform()
+}

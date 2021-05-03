@@ -1,0 +1,37 @@
+import org.springframework.boot.gradle.plugin.SpringBootPlugin
+
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version "${springBootVersion}" apply false
+    id 'io.spring.dependency-management' version "${dependencyManagementVersion}"
+}
+
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom SpringBootPlugin.BOM_COORDINATES
+    }
+}
+
+dependencies {
+    implementation group: 'org.apache.commons', name: 'commons-text', version: "${apacheCommonTextVersion}"
+    implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.0'
+    implementation group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.4.4'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
+    testImplementation group: 'org.junit.jupiter',name: 'junit-jupiter-api',version: "${junitJupiterApiVersion}"
+    testRuntimeOnly group: 'org.junit.jupiter',name: 'junit-jupiter-engine',version: "${junitJupiterEngineVersion}"
+    testCompile group: 'org.mockito',name: 'mockito-core',version: "${mockitoCoreVersion}"
+    testCompile group: 'org.mockito',name: 'mockito-junit-jupiter',version: "${mockitoJunitJupiter}"
+    implementation project(':persistence')
+}
+
+test {
+    useJUnitPlatform()
+    systemProperty 'spring.profiles.active', 'default'
+}
