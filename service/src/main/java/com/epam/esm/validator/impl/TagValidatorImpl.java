@@ -11,7 +11,7 @@ public class TagValidatorImpl implements TagValidator {
     private static final int MAX_TAG_NAME_LENGTH = 64;
 
     @Override
-    public void isTagValid(TagDto tag) {
+    public void validateTag(TagDto tag) {
       if (StringUtils.isBlank(tag.getName())){
           throw  new TagValidationException("Tag name can't be empty",40001);
       }

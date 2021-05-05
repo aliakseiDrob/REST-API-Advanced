@@ -1,17 +1,13 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.dao.SortType;
+import com.epam.esm.entity.SortType;
 import com.epam.esm.dao.GiftCertificateDao;
 import com.epam.esm.entity.GiftCertificate;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.text.StringSubstitutor;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
+import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,9 +42,11 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
 
     @Override
     public Optional<GiftCertificate> getById(Long id) {
-        return Optional.ofNullable(entityManager
+        return entityManager
                 .createQuery("SELECT a FROM GiftCertificate a WHERE a.id =: id AND a.isAvailable =1", GiftCertificate.class)
-                .setParameter("id",id).getSingleResult());
+                .setParameter("id", id)
+                .getResultStream()
+                .findFirst();
     }
 
     @Override
@@ -156,15 +154,8 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    @Transactional
     public GiftCertificate update(GiftCertificate certificate) {
         entityManager.merge(certificate);
         return entityManager.find(GiftCertificate.class, certificate.getId());
-    }
-
-    @Override
-    @Transactional
-    public void delete(GiftCertificate certificate) {
-        entityManager.merge(certificate);
     }
 }

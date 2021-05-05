@@ -1,5 +1,6 @@
 package com.epam.esm.dao;
 
+import com.epam.esm.entity.MostWidelyUsedTag;
 import com.epam.esm.entity.Tag;
 
 import java.util.List;
@@ -64,4 +65,13 @@ public interface TagDao {
      * @return set of Tags saved in database
      */
     Set<Tag> saveTags(Set<Tag> tags);
+
+    /**
+     * Finds the most widely used tag of a user with the highest cost of all orders
+     *
+     * @param userId User id
+     * @return MostWidelyUsedTag entity witch contains the most widely used tag of a user
+     * and the highest cost of all orders
+     */
+    MostWidelyUsedTag getMostWildlyUsedTag(Long userId);
 }

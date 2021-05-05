@@ -3,7 +3,6 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.dao.UserDao;
 import com.epam.esm.entity.User;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -40,7 +39,6 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    @Transactional
     public long save(User user) {
         entityManager.persist(user);
         return user.getId();

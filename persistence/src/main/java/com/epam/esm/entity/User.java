@@ -1,17 +1,14 @@
 package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Getter
-@Setter
-@RequiredArgsConstructor
+@Data
+@NoArgsConstructor
 @Table(name = "\"user\"")
 public class User {
     @Id
@@ -36,14 +33,5 @@ public class User {
 
     public User(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", orders=" + orders +
-                '}';
     }
 }

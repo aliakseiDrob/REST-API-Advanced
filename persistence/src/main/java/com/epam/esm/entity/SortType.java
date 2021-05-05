@@ -1,4 +1,4 @@
-package com.epam.esm.dao;
+package com.epam.esm.entity;
 
 import java.util.List;
 import java.util.stream.Collectors;

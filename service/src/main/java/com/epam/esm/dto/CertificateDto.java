@@ -9,11 +9,9 @@ import java.time.LocalDateTime;
 import java.util.Set;
 
 @EqualsAndHashCode(callSuper = false)
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
-@Getter
-@Setter
 public class CertificateDto extends RepresentationModel<CertificateDto> implements Serializable {
     private long id;
     private String name;
@@ -23,5 +21,4 @@ public class CertificateDto extends RepresentationModel<CertificateDto> implemen
     private LocalDateTime createDate;
     private LocalDateTime lastUpdateDate;
     private Set<TagDto> tags;
-
 }

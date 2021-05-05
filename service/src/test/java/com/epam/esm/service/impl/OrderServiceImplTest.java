@@ -3,7 +3,6 @@ package com.epam.esm.service.impl;
 import com.epam.esm.dao.OrderDao;
 import com.epam.esm.dto.*;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.MostWidelyUsedTag;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.exception.EntityNotFoundException;
@@ -18,9 +17,7 @@ import org.modelmapper.ModelMapper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,26 +28,10 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class OrderServiceImplTest {
-    private static final DateTimeFormatter DATE_TIME_FORMATTER =
-            DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    private static final OrderDetailsDto ORDER_DETAILS_DTO = new OrderDetailsDto();
     private static List<Order> orders;
     private static List<OrderDto> ordersDto;
-    private static final CertificateDto CERTIFICATE_DTO = new CertificateDto(1L, "first", "for men",
-            new BigDecimal("128.01"), 11,
-            LocalDateTime.parse("2021-03-21 20:11:10", DATE_TIME_FORMATTER),
-            LocalDateTime.parse("2021-03-24 20:11:10", DATE_TIME_FORMATTER), Collections.emptySet());
-    private static final GiftCertificate GIFT_CERTIFICATE = new GiftCertificate(2L, "second", "for men",
-            new BigDecimal("128.01"), 11, 1,
-            LocalDateTime.parse("2021-03-21 20:11:10", DATE_TIME_FORMATTER),
-            LocalDateTime.parse("2021-03-24 20:11:10", DATE_TIME_FORMATTER));
-    private static final Order ORDER = new Order(1L, LocalDateTime.parse("2021-03-21 20:11:10", DATE_TIME_FORMATTER),
-            new BigDecimal("128.01"), new User(1L, "Ivan"), GIFT_CERTIFICATE);
-    private static final OrderDto ORDER_DTO = new OrderDto(1L, LocalDateTime.parse("2021-03-21 20:11:10", DATE_TIME_FORMATTER),
-            new BigDecimal("128.01"), CERTIFICATE_DTO, new UserDto(1L, "Ivan"));
-    private static final MostWidelyUsedTag MOST_WIDELY_USED_TAG =
-            new MostWidelyUsedTag(1L, "Tag", new BigDecimal("100"));
-    private static final MostUsedTagDto MOST_USED_TAG_DTO =
-            new MostUsedTagDto(new TagDto(1L, "Tag"), new BigDecimal("100"));
 
     @Mock
     private OrderDao dao;
@@ -71,53 +52,65 @@ public class OrderServiceImplTest {
 
     @Test
     public void testGetAllUserOrdersShouldReturnAllUsersOrders() {
+        //when
         when(dao.getAllUserOrders(anyLong())).thenReturn(orders);
         when(modelMapper.map(orders.get(0), OrderDto.class)).thenReturn(ordersDto.get(0));
         when(modelMapper.map(orders.get(1), OrderDto.class)).thenReturn(ordersDto.get(1));
-        assertEquals(service.getAllUserOrders(anyLong()), ordersDto);
+        //then
+        assertEquals(ordersDto, service.getAllUserOrders(anyLong()));
         verify(dao, times(1)).getAllUserOrders(anyLong());
+        verify(modelMapper, times(orders.size())).map(any(), any());
     }
 
     @Test
-    public void testGetUserOrderShouldReturnOrder() {
+    public void testGetUserOrderShouldReturnOrderDetailsDto() {
+        //when
         when(dao.getUserOrder(anyLong(), anyLong())).thenReturn(Optional.of(orders.get(0)));
-        when(modelMapper.map(orders.get(0), OrderDto.class)).thenReturn(ordersDto.get(0));
-        assertEquals(service.getUserOrder(anyLong(), anyLong()), ordersDto.get(0));
+        when(modelMapper.map(orders.get(0), OrderDetailsDto.class)).thenReturn(ORDER_DETAILS_DTO);
+        //then
+        assertEquals(ORDER_DETAILS_DTO, service.getUserOrder(anyLong(), anyLong()));
         verify(dao, times(1)).getUserOrder(anyLong(), anyLong());
+        verify(modelMapper, times(1)).map(any(), any());
     }
 
     @Test
     public void testGetUserOrderShouldThrowExceptionIfOrderNotExist() {
+        //when
         when(dao.getUserOrder(anyLong(), anyLong())).thenReturn(Optional.empty());
+        //then
         assertThrows(EntityNotFoundException.class, () -> service.getUserOrder(anyLong(), anyLong()));
         verify(dao, times(1)).getUserOrder(anyLong(), anyLong());
+        verify(modelMapper, times(0)).map(any(), any());
     }
 
     @Test
     public void testCreateOrderShouldReturnSavedOrderId() {
-        doNothing().when(orderValidator).isOrderValid(any(OrderDto.class));
-        when(modelMapper.map(ORDER_DTO, Order.class)).thenReturn(ORDER);
-        when(dao.createOrder(ORDER)).thenReturn(ORDER);
-        assertEquals(service.createOrder(ORDER_DTO), 1L);
+        //when
+        doNothing().when(orderValidator).validateOrder(any(OrderDto.class));
+        when(modelMapper.map(ordersDto.get(0), Order.class)).thenReturn(orders.get(0));
+        when(dao.createOrder(orders.get(0))).thenReturn(orders.get(0));
+        //then
+        assertEquals(1L, service.createOrder(ordersDto.get(0)));
+        verify(dao, times(1)).createOrder(any(Order.class));
+        verify(modelMapper, times(1)).map(any(), any());
     }
 
     @Test
     public void testCreateOrderShouldThrowExceptionIfOrderNotValid() {
-        doThrow(EntityNotFoundException.class).when(orderValidator).isOrderValid(ORDER_DTO);
-        assertThrows(EntityNotFoundException.class, () -> service.createOrder(ORDER_DTO));
+        //when
+        doThrow(EntityNotFoundException.class).when(orderValidator).validateOrder(ordersDto.get(0));
+        //then
+        assertThrows(EntityNotFoundException.class, () -> service.createOrder(ordersDto.get(0)));
+        verify(dao, times(0)).createOrder(any(Order.class));
+        verify(modelMapper, times(0)).map(any(), any());
     }
 
     @Test
     void testGetRowCountsShouldReturnCountRowsInTable() {
+        //when
         when(dao.getRowsCount()).thenReturn(1L);
+        //then
         assertEquals(service.getRowCounts(), 1L);
         verify(dao, times(1)).getRowsCount();
-    }
-
-    @Test
-    public void testGetMostWidelyUsedTag() {
-        when(dao.getMostWildlyUsedTag(1L)).thenReturn(MOST_WIDELY_USED_TAG);
-        when(modelMapper.map(MOST_USED_TAG_DTO, MostUsedTagDto.class)).thenReturn(MOST_USED_TAG_DTO);
-        assertEquals(service.getMostWidelyUsedTag(1L), MOST_USED_TAG_DTO);
     }
 }

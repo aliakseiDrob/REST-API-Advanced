@@ -16,6 +16,8 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
     implementation group: 'org.modelmapper', name: 'modelmapper', version: '2.4.0'
+    compileOnly group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
+    annotationProcessor group: 'org.projectlombok', name: 'lombok', version: "${lombokVersion}"
 
     implementation group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 

@@ -97,11 +97,4 @@ public interface GiftCertificateDao {
      */
 
     GiftCertificate update(GiftCertificate certificate);
-
-    /**
-     * Removes  GiftCertificate from database
-     *
-     * @param certificate GiftCertificate entity
-     */
-    void delete(GiftCertificate certificate);
 }

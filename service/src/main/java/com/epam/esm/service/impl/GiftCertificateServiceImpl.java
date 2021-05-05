@@ -10,8 +10,8 @@ import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.utils.ServiceUtils;
 import com.epam.esm.validator.CertificateValidator;
 import com.epam.esm.validator.PaginationValidator;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +19,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private final GiftCertificateDao giftCertificateDao;
@@ -27,16 +28,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     private final CertificateValidator certificateValidator;
     private final PaginationValidator paginationValidator;
 
-    @Autowired
-    public GiftCertificateServiceImpl(GiftCertificateDao giftCertificateDao,
-                                      TagDao tagDao,
-                                      ModelMapper modelMapper, CertificateValidator certificateValidator, PaginationValidator paginationValidator) {
-        this.giftCertificateDao = giftCertificateDao;
-        this.tagDao = tagDao;
-        this.modelMapper = modelMapper;
-        this.certificateValidator = certificateValidator;
-        this.paginationValidator = paginationValidator;
-    }
 
     @Override
     public List<CertificateDto> getAll() {
@@ -49,7 +40,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     public List<CertificateDto> getAll(int page, int items) {
         long rowsCount = giftCertificateDao.getRowsCount();
-        paginationValidator.isPaginationPageExists(page, items, rowsCount);
+        paginationValidator.validatePaginationPage(page, items, rowsCount);
         List<GiftCertificate> giftCertificates = giftCertificateDao.getAll(ServiceUtils.calculateStartPos(page, items), items);
         return giftCertificates.stream()
                 .map(certificate -> modelMapper.map(certificate, CertificateDto.class))
@@ -74,14 +65,13 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         GiftCertificate certificate = giftCertificateDao.getById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Gift Certificate not found", 40401));
         certificate.setIsAvailable(0);
-        giftCertificateDao.delete(certificate);
+        giftCertificateDao.update(certificate);
     }
 
     @Override
     @Transactional
-    public long
-    save(CertificateDto certificateDto) {
-        certificateValidator.isCertificateValidForSave(certificateDto);
+    public long save(CertificateDto certificateDto) {
+        certificateValidator.validateCertificateForSave(certificateDto);
         GiftCertificate giftCertificate = modelMapper.map(certificateDto, GiftCertificate.class);
         Set<Tag> certificateTags = tagDao.saveTags(giftCertificate.getTags());
         giftCertificate.setTags(certificateTags);
@@ -122,7 +112,7 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public CertificateDto update(CertificateDto certificateDto) {
-        certificateValidator.isCertificateValidForUpdate(certificateDto);
+        certificateValidator.validateCertificateForUpdate(certificateDto);
         GiftCertificate updatedCertificate = giftCertificateDao.getById(certificateDto.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Gift Certificate not found", 40401));
         Set<Tag> tags = certificateDto.getTags().stream()
@@ -134,7 +124,8 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return modelMapper.map(giftCertificateDao.update(updatedCertificate), CertificateDto.class);
     }
 
-    private void setUpdatableFields(GiftCertificate certificate, CertificateDto certificateDto) {
+    //package access for testing
+    void setUpdatableFields(GiftCertificate certificate, CertificateDto certificateDto) {
         setNameIfPassed(certificate, certificateDto);
         setDescriptionIfPassed(certificate, certificateDto);
         setPriceIfPassed(certificate, certificateDto);

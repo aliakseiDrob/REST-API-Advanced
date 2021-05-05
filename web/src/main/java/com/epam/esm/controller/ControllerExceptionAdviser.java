@@ -26,11 +26,6 @@ public class ControllerExceptionAdviser extends ResponseEntityExceptionHandler {
         this.messageSource = messageSource;
     }
 
-    @ExceptionHandler(GlobalException.class)
-    public ResponseEntity<Object> handleGlobalException(GlobalException ex, Locale locale) {
-        return createResponseEntity(ex.getErrorCode(),locale,ex.getStatus());
-    }
-
     @ExceptionHandler(TagValidationException.class)
     public ResponseEntity<Object> handleTagValidationException(TagValidationException ex, Locale locale) {
         return createResponseEntity(ex.getCode(),locale,HttpStatus.BAD_REQUEST);
@@ -50,9 +45,14 @@ public class ControllerExceptionAdviser extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handlePaginationPageException(PaginationPageException ex, Locale locale) {
         return createResponseEntity(ex.getCode(),locale,HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(TagEntityException.class)
+    public ResponseEntity<Object> handleTagEntityException(TagEntityException ex, Locale locale) {
+        return createResponseEntity(ex.getCode(),locale,HttpStatus.BAD_REQUEST);
+    }
 
     @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<Object> handleUnregisterException(Locale locale) {
+    public ResponseEntity<Object> handleUnregisterException(Exception ex,Locale locale) {
+        System.out.println(ex);
         return createResponseEntity(50001,locale,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

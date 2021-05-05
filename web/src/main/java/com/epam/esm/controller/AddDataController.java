@@ -9,8 +9,8 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.UserService;
 import com.github.javafaker.Faker;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @RestController
+@RequiredArgsConstructor
 public class AddDataController {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(AddDataController.class);
@@ -32,17 +33,6 @@ public class AddDataController {
     private final UserService userService;
     private final GiftCertificateService giftCertificateService;
     private final OrderService orderService;
-    private final ModelMapper modelMapper;
-
-    @Autowired
-    public AddDataController(TagService tagService, UserService userService,
-                             GiftCertificateService giftCertificateService, OrderService orderService, ModelMapper modelMapper) {
-        this.tagService = tagService;
-        this.userService = userService;
-        this.giftCertificateService = giftCertificateService;
-        this.orderService = orderService;
-        this.modelMapper = modelMapper;
-    }
 
     @GetMapping("/addTags")
     @ResponseStatus(HttpStatus.CREATED)

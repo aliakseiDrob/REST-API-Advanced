@@ -8,10 +8,8 @@ import java.util.Set;
 
 @Entity
 @Data
-@RequiredArgsConstructor
-@Getter
-@Setter
-@EqualsAndHashCode(exclude = {"id", "giftCertificates"}, callSuper = false)
+@NoArgsConstructor
+@EqualsAndHashCode(exclude = {"id", "giftCertificates"})
 @Table(name = "tag")
 @SqlResultSetMapping(name = "mostWidelyUsedTagMapper",
         classes = {

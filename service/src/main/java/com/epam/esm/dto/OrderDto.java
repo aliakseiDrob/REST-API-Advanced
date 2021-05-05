@@ -8,17 +8,14 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @EqualsAndHashCode(callSuper = false)
-@RequiredArgsConstructor
-@AllArgsConstructor
 @Data
-@Getter
-@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderDto extends RepresentationModel<OrderDto> implements Serializable {
     private long id;
     private LocalDateTime orderDate;
     private BigDecimal orderCost;
     private CertificateDto certificate;
     private UserDto user;
-
 
 }

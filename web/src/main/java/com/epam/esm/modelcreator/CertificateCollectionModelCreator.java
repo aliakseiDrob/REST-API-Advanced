@@ -3,7 +3,7 @@ package com.epam.esm.modelcreator;
 import com.epam.esm.controller.GiftCertificateController;
 import com.epam.esm.dto.CertificateDto;
 import com.epam.esm.service.GiftCertificateService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;
 
@@ -13,16 +13,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
+@RequiredArgsConstructor
 public class CertificateCollectionModelCreator {
 
     private static final int FIRST_PAGE = 1;
     private static final int SECOND_PAGE = 2;
     private final GiftCertificateService service;
-
-    @Autowired
-    public CertificateCollectionModelCreator(GiftCertificateService service) {
-        this.service = service;
-    }
 
     public CollectionModel<CertificateDto> createModel(List<CertificateDto> certificates, int page, int items) {
         certificates.forEach(this::addLinkWithItself);

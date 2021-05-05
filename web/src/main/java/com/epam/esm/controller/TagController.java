@@ -1,11 +1,9 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.TagDto;
-import com.epam.esm.exception.GlobalException;
 import com.epam.esm.modelcreator.TagCollectionCreator;
 import com.epam.esm.service.TagService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -16,17 +14,12 @@ import java.util.List;
  * The controller provides CRD operations on Tag entity.
  */
 @RestController
+@RequestMapping("/tags")
+@RequiredArgsConstructor
 public class TagController {
 
     private final TagService tagService;
     private final TagCollectionCreator tagCollectionCreator;
-
-
-    @Autowired
-    public TagController(TagService tagService, TagCollectionCreator tagCollectionCreator) {
-        this.tagService = tagService;
-        this.tagCollectionCreator = tagCollectionCreator;
-    }
 
     /**
      * Finds paginate page of TagDto
@@ -35,7 +28,7 @@ public class TagController {
      * @param items number of TagDto on page
      * @return the list of TagDto
      */
-    @GetMapping("/tags")
+    @GetMapping()
     public CollectionModel<TagDto> getAll(@RequestParam(required = false, defaultValue = "1") int page,
                                           @RequestParam(required = false, defaultValue = "10") int items) {
         List<TagDto> tags = tagService.getAll(page, items);
@@ -47,9 +40,8 @@ public class TagController {
      *
      * @param id the id of TagDto entity
      * @return the TagDto with queried id
-     * @throws GlobalException if TagDto doesn't exist
      */
-    @GetMapping("/tags/{id}")
+    @GetMapping("/{id}")
     public TagDto getTag(@PathVariable Long id) {
         return tagService.getById(id);
     }
@@ -60,14 +52,10 @@ public class TagController {
      * @param tag TagDto entity
      * @return id the added TagDto
      */
-    @PostMapping("/tags")
+    @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public long save(@RequestBody TagDto tag) {
-        try {
-            return tagService.save(tag);
-        } catch (DataIntegrityViolationException exception) {
-            throw new GlobalException("exception.message.40009", 40009, HttpStatus.BAD_REQUEST);
-        }
+        return tagService.save(tag);
     }
 
     /**
@@ -75,7 +63,7 @@ public class TagController {
      *
      * @param id the id of TagDto to remove
      */
-    @DeleteMapping("/tags/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTag(@PathVariable Long id) {
         tagService.delete(id);

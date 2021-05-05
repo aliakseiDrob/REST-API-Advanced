@@ -14,14 +14,15 @@ public class CertificateValidatorImpl implements CertificateValidator {
     private static final int MAX_CERTIFICATE_DESCRIPTION_LENGTH = 255;
 
     @Override
-    public void isCertificateValidForSave(CertificateDto certificate) {
-        isCertificateNameValid(certificate.getName());
-        isPriceValid(certificate.getPrice());
-        isDurationValid(certificate.getDuration());
-        isDescriptionValid(certificate.getDescription());
+    public void validateCertificateForSave(CertificateDto certificate) {
+        validateCertificateName(certificate.getName());
+        validateCertificatePrice(certificate.getPrice());
+        validateCertificateDuration(certificate.getDuration());
+        validateCertificateDescription(certificate.getDescription());
     }
 
-    private void isDescriptionValid(String description) {
+    //package access for testing
+    void validateCertificateDescription(String description) {
         if (StringUtils.isBlank(description)) {
             throw new CertificateValidationException("Certificate description can't be empty", 40007);
         }
@@ -30,19 +31,22 @@ public class CertificateValidatorImpl implements CertificateValidator {
         }
     }
 
-    private void isDurationValid(int duration) {
+    //package access for testing
+    void validateCertificateDuration(int duration) {
         if (duration <= 0 || duration > 31) {
             throw new CertificateValidationException("duration must be between 1 and 31", 40006);
         }
     }
 
-    private void isPriceValid(BigDecimal price) {
+    //package access for testing
+    void validateCertificatePrice(BigDecimal price) {
         if (price.compareTo(BigDecimal.ZERO) <= 0) {
             throw new CertificateValidationException("price can't be less than zero", 40005);
         }
     }
 
-    private void isCertificateNameValid(String name) {
+    //package access for testing
+    void validateCertificateName(String name) {
         if (StringUtils.isBlank(name)) {
             throw new CertificateValidationException("Certificate name can't be empty", 40003);
         }
@@ -52,21 +56,23 @@ public class CertificateValidatorImpl implements CertificateValidator {
     }
 
     @Override
-    public void isCertificateValidForUpdate(CertificateDto certificate) {
-        isUpdatedCertificateNameValid(certificate.getName());
-        isUpdatedPriceValid(certificate.getPrice());
-        isUpdatedDurationValid(certificate.getDuration());
-        isUpdatedDescriptionValid(certificate.getDescription());
+    public void validateCertificateForUpdate(CertificateDto certificate) {
+        validateUpdatedCertificateName(certificate.getName());
+        validateUpdatedCertificatePrice(certificate.getPrice());
+        validateUpdatedDuration(certificate.getDuration());
+        validateUpdatedDescription(certificate.getDescription());
     }
 
-    private void isUpdatedDurationValid(int duration) {
-        if (duration!=0 && duration <= 0 || duration > 31) {
+    //package access for testing
+    void validateUpdatedDuration(int duration) {
+        if (duration != 0 && duration <= 0 || duration > 31) {
             throw new CertificateValidationException("duration must be between 1 and 31", 40006);
         }
     }
 
-    private void isUpdatedDescriptionValid(String description) {
-        if (description != null && description.trim().equals("")) {
+    //package access for testing
+    void validateUpdatedDescription(String description) {
+        if (description != null && description.isBlank()) {
             throw new CertificateValidationException("Certificate description can't be empty", 40007);
         }
         if (description != null && description.length() > MAX_CERTIFICATE_DESCRIPTION_LENGTH) {
@@ -74,13 +80,15 @@ public class CertificateValidatorImpl implements CertificateValidator {
         }
     }
 
-    private void isUpdatedPriceValid(BigDecimal price) {
+    //package access for testing
+    void validateUpdatedCertificatePrice(BigDecimal price) {
         if (price != null && price.compareTo(BigDecimal.ZERO) <= 0) {
             throw new CertificateValidationException("price can't be less than zero", 40005);
         }
     }
 
-    private void isUpdatedCertificateNameValid(String name) {
+    //package access for testing
+    void validateUpdatedCertificateName(String name) {
         if (name != null && name.trim().equals("")) {
             throw new CertificateValidationException("Certificate name can't be empty", 40003);
         }

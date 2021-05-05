@@ -3,7 +3,7 @@ package com.epam.esm.modelcreator;
 import com.epam.esm.controller.UserController;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;
 
@@ -13,16 +13,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
+@RequiredArgsConstructor
 public class UserCollectionModelCreator{
 
     private static final int FIRST_PAGE = 1;
     private static final int SECOND_PAGE = 2;
     private final UserService userService;
-
-    @Autowired
-    public UserCollectionModelCreator(UserService userService) {
-        this.userService = userService;
-    }
 
     public CollectionModel<UserDto> createModel(List<UserDto> users, int page, int items) {
         users.forEach(this::addLinkUserWithItself);

@@ -1,21 +1,27 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.TagDao;
+import com.epam.esm.dto.MostUsedTagDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.entity.MostWidelyUsedTag;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityNotFoundException;
+import com.epam.esm.exception.TagEntityException;
 import com.epam.esm.service.TagService;
 import com.epam.esm.utils.ServiceUtils;
 import com.epam.esm.validator.PaginationValidator;
 import com.epam.esm.validator.TagValidator;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
 
     private final TagDao tagDao;
@@ -23,13 +29,6 @@ public class TagServiceImpl implements TagService {
     private final TagValidator tagValidator;
     private final PaginationValidator paginationValidator;
 
-    @Autowired
-    public TagServiceImpl(TagDao tagDao, ModelMapper modelMapper, TagValidator tagValidator, PaginationValidator paginationValidator) {
-        this.tagDao = tagDao;
-        this.modelMapper = modelMapper;
-        this.tagValidator = tagValidator;
-        this.paginationValidator = paginationValidator;
-    }
 
     @Override
     public List<TagDto> getAll() {
@@ -42,7 +41,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDto> getAll(int page, int items) {
         long rowsCount = tagDao.getRowsCount();
-        paginationValidator.isPaginationPageExists(page, items, rowsCount);
+        paginationValidator.validatePaginationPage(page, items, rowsCount);
         List<Tag> tags = tagDao.getAll(ServiceUtils.calculateStartPos(page, items), items);
         return tags.stream()
                 .map(tag -> modelMapper.map(tag, TagDto.class))
@@ -62,13 +61,29 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public long save(TagDto tagDto) {
-        tagValidator.isTagValid(tagDto);
+        tagValidator.validateTag(tagDto);
         Tag tag = modelMapper.map(tagDto, Tag.class);
-        return tagDao.save(tag);
+        try {
+            return tagDao.save(tag);
+        } catch (
+                DataIntegrityViolationException exception) {
+            throw new TagEntityException("Tag already exists", 40009);
+        }
     }
 
     @Override
     public void delete(Long id) {
         tagDao.delete(id);
+    }
+
+    @Override
+    public MostUsedTagDto getMostWidelyUsedTag(Long userId) {
+        MostWidelyUsedTag mostWidelyUsedTag = null;
+                try{
+                mostWidelyUsedTag= tagDao.getMostWildlyUsedTag(userId);}
+                catch(EmptyResultDataAccessException ex){
+                 throw new TagEntityException("Tag not found", 40406);
+                }
+        return modelMapper.map(mostWidelyUsedTag, MostUsedTagDto.class);
     }
 }

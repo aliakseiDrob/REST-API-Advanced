@@ -1,15 +1,15 @@
 package com.epam.esm.controller;
 
 import com.epam.esm.dto.MostUsedTagDto;
+import com.epam.esm.dto.OrderDetailsDto;
 import com.epam.esm.dto.OrderDto;
 import com.epam.esm.dto.UserDto;
 import com.epam.esm.modelcreator.OrderCollectionModelCreator;
 import com.epam.esm.modelcreator.UserCollectionModelCreator;
-import com.epam.esm.exception.GlobalException;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.service.TagService;
 import com.epam.esm.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,31 +21,23 @@ import java.util.List;
  */
 
 @RestController
+@RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
 
     private final UserService userService;
     private final OrderService orderService;
+    private final TagService tagService;
     private final UserCollectionModelCreator userCollectionModelCreator;
     private final OrderCollectionModelCreator orderCollectionModelCreator;
-
-    @Autowired
-    public UserController(UserService userService, OrderService orderService,
-                          UserCollectionModelCreator userCollectionModelCreator,
-                          OrderCollectionModelCreator orderCollectionModelCreator) {
-        this.userService = userService;
-        this.orderService = orderService;
-        this.userCollectionModelCreator = userCollectionModelCreator;
-        this.orderCollectionModelCreator = orderCollectionModelCreator;
-    }
 
     /**
      * Finds UserDto by id
      *
      * @param id the id of UserDto entity
      * @return the UserDto with queried id
-     * @throws GlobalException if userDto doesn't exist
      */
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public UserDto getById(@PathVariable Long id) {
         return userService.getById(id);
     }
@@ -57,7 +49,7 @@ public class UserController {
      * @param items number of usersDto on page
      * @return the list of usersDto
      */
-    @GetMapping("/users")
+    @GetMapping()
     public CollectionModel<UserDto> getAll(@RequestParam(required = false, defaultValue = "1") int page,
                                            @RequestParam(required = false, defaultValue = "10") int items) {
         List<UserDto> users = userService.getAll(page, items);
@@ -70,7 +62,7 @@ public class UserController {
      * @param id the id of UserDto entity
      * @return paginate page OrdersDto of UserDto
      */
-    @GetMapping("users/{id}/orders")
+    @GetMapping("/{id}/orders")
     public CollectionModel<OrderDto> getAllUserOrders(@PathVariable Long id) {
         List<OrderDto> userOrders = orderService.getAllUserOrders(id);
         return orderCollectionModelCreator.createModel(userOrders, id);
@@ -82,15 +74,10 @@ public class UserController {
      * @param userId  the id of UserDto entity
      * @param orderId the id of OrderDto entity
      * @return the OrderDto with queried id
-     * @throws GlobalException if OrderDto doesn't exist
      */
-    @GetMapping("users/{userId}/orders/{orderId}")
-    public OrderDto getUserOrder(@PathVariable Long userId, @PathVariable Long orderId) {
-        try {
-            return orderService.getUserOrder(userId, orderId);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new GlobalException("exception.message.40404", 40404, HttpStatus.NOT_FOUND);
-        }
+    @GetMapping("/{userId}/orders/{orderId}")
+    public OrderDetailsDto getUserOrder(@PathVariable Long userId, @PathVariable Long orderId) {
+        return orderService.getUserOrder(userId, orderId);
     }
 
     /**
@@ -99,7 +86,7 @@ public class UserController {
      * @param order OrderDto Entity
      * @return id created OrderDto Entity
      */
-    @PostMapping("users/{id}/orders")
+    @PostMapping("/{id}/orders")
     @ResponseStatus(HttpStatus.CREATED)
     public long createOrder(@RequestBody OrderDto order) {
         return orderService.createOrder(order);
@@ -112,13 +99,9 @@ public class UserController {
      * @return MostWidelyUsedTag entity witch contains the most widely used tagDto of a userDto
      * and the highest cost of all ordersDto
      */
-    @GetMapping("/mostUsedTag/{userId}")
+    @GetMapping("/{userId}/mostUsedTag")
     public MostUsedTagDto getMostWidelyUsedTag(@PathVariable Long userId) {
-        try {
-            return orderService.getMostWidelyUsedTag(userId);
-        } catch (EmptyResultDataAccessException ex) {
-            throw new GlobalException("exception.message.40406", 40406, HttpStatus.NOT_FOUND);
-        }
+        return tagService.getMostWidelyUsedTag(userId);
     }
 }
 

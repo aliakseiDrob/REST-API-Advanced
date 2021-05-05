@@ -13,9 +13,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = "tags", callSuper = false)
-@Getter
-@Setter
+@EqualsAndHashCode(exclude = {"tags","lastUpdateDate"})
 public class GiftCertificate {
 
     @Id
@@ -27,11 +25,9 @@ public class GiftCertificate {
     private BigDecimal price;
     @Column(nullable = false)
     private int duration;
-    @Column(name = "is_available")
+    @Column(nullable = false)
     private int isAvailable;
-    @Column(name = "create_date")
     private LocalDateTime createDate;
-    @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)

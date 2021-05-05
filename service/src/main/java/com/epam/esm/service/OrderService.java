@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.dto.MostUsedTagDto;
+import com.epam.esm.dto.OrderDetailsDto;
 import com.epam.esm.dto.OrderDto;
 
 import java.util.List;
@@ -25,7 +26,7 @@ public interface OrderService {
      * @param orderId OrderDto id
      * @return OrderDto
      */
-    OrderDto getUserOrder(Long userId, Long orderId);
+    OrderDetailsDto getUserOrder(Long userId, Long orderId);
 
     /**
      * Saves  OrdersDto
@@ -41,14 +42,5 @@ public interface OrderService {
      * @return amount rows in database
      */
     long getRowCounts();
-
-    /**
-     * Finds the most widely used tag of a user with the highest cost of all orders
-     *
-     * @param userId UserDto id
-     * @return MostWidelyUsedTag entity witch contains the most widely used tag of a user
-     * and the highest cost of all orders
-     */
-    MostUsedTagDto getMostWidelyUsedTag(Long userId);
 
 }

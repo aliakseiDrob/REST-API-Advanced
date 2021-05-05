@@ -3,6 +3,7 @@ package com.epam.esm.modelcreator;
 import com.epam.esm.controller.TagController;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.TagService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;
@@ -13,16 +14,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @Component
+@RequiredArgsConstructor
 public class TagCollectionCreator {
 
     private static final int FIRST_PAGE = 1;
     private static final int SECOND_PAGE = 2;
     private final TagService tagService;
-
-    @Autowired
-    public TagCollectionCreator(TagService tagService) {
-        this.tagService = tagService;
-    }
 
     public CollectionModel<TagDto> createModel(List<TagDto> tags, int page, int items) {
         tags.forEach(this::addLinkWithItself);

@@ -41,14 +41,4 @@ public interface OrderDao {
      * @return amount rows in database
      */
     long getRowsCount();
-
-    /**
-     * Finds the most widely used tag of a user with the highest cost of all orders
-     *
-     * @param userId User id
-     * @return MostWidelyUsedTag entity witch contains the most widely used tag of a user
-     * and the highest cost of all orders
-     */
-   MostWidelyUsedTag getMostWildlyUsedTag(Long userId);
-
 }

@@ -1,7 +1,9 @@
 package com.epam.esm.service.impl;
 
 import com.epam.esm.dao.impl.TagDaoImpl;
+import com.epam.esm.dto.MostUsedTagDto;
 import com.epam.esm.dto.TagDto;
+import com.epam.esm.entity.MostWidelyUsedTag;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.exception.EntityNotFoundException;
 import com.epam.esm.exception.PaginationPageException;
@@ -16,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +32,9 @@ import static org.mockito.Mockito.times;
 
 @ExtendWith(MockitoExtension.class)
 public class TagServiceImplTest {
+
+    private static final int PAGE_NUMBER = 1;
+    private static final int ITEMS_ON_PAGE = 1;
     private static List<Tag> tags;
     private static List<TagDto> tagsDto;
 
@@ -51,76 +57,115 @@ public class TagServiceImplTest {
     }
 
     @Test
-    public void testGetByIdShouldReturnTagWhenTagExists() {
-        when(dao.getById(1L)).thenReturn(Optional.of(tags.get(0)));
-        when(modelMapper.map(any(), any())).thenReturn((tagsDto.get(0)));
-        assertEquals(tagsDto.get(0), service.getById(1L));
-        verify(dao, times(1)).getById(anyLong());
-    }
-
-    @Test
-    public void testGetByIdShouldTrowExceptionWhenTagNotExists() {
-        when(dao.getById(anyLong())).thenReturn(Optional.empty());
-
-        assertThrows(EntityNotFoundException.class, () -> service.getById(anyLong()));
-        verify(dao, times(1)).getById(anyLong());
-    }
-
-    @Test
     public void testGetAllShouldReturnAllTags() {
+        //when
         when(dao.getAll()).thenReturn(tags);
         when(modelMapper.map(tags.get(0), TagDto.class)).thenReturn((tagsDto.get(0)));
         when(modelMapper.map(tags.get(1), TagDto.class)).thenReturn((tagsDto.get(1)));
-
-        assertEquals(service.getAll(), tagsDto);
-        verify(dao).getAll();
+        //then
+        assertEquals(tagsDto, service.getAll());
+        verify(dao, times(1)).getAll();
+        verify(modelMapper, times(tags.size())).map(any(), any());
+        verify(paginationValidator, times(0)).validatePaginationPage(anyInt(), anyInt(), anyLong());
     }
 
     @Test
-    void testGetAllShouldReturnPageTags() {
-        when(dao.getAll(0, 2)).thenReturn(tags);
+    void testGetAllShouldReturnPaginatePageTags() {
+        //when
+        when(dao.getRowsCount()).thenReturn(2L);
+        doNothing().when(paginationValidator).validatePaginationPage(anyInt(), anyInt(), anyLong());
+        when(dao.getAll(0, ITEMS_ON_PAGE)).thenReturn(tags);
         when(modelMapper.map(tags.get(0), TagDto.class)).thenReturn((tagsDto.get(0)));
         when(modelMapper.map(tags.get(1), TagDto.class)).thenReturn((tagsDto.get(1)));
-        assertEquals(service.getAll(1, 2), tagsDto);
+        //then
+        assertEquals(tagsDto, service.getAll(PAGE_NUMBER, ITEMS_ON_PAGE));
         verify(dao).getAll(anyInt(), anyInt());
+        verify(modelMapper, times(tags.size())).map(any(), any());
+        verify(paginationValidator, times(1)).validatePaginationPage(anyInt(), anyInt(), anyLong());
     }
 
     @Test
     void testGetAllShouldThrowExceptionWhenPageNotExist() {
+        //when
         when(dao.getRowsCount()).thenReturn(1L);
-        doThrow(PaginationPageException.class).when(paginationValidator).isPaginationPageExists(1, 1, 1L);
-        assertThrows(PaginationPageException.class, () -> service.getAll(1, 1));
+        doThrow(PaginationPageException.class).when(paginationValidator).validatePaginationPage(PAGE_NUMBER, ITEMS_ON_PAGE, 1L);
+        //then
+        assertThrows(PaginationPageException.class, () -> service.getAll(PAGE_NUMBER, ITEMS_ON_PAGE));
         verify(dao, times(1)).getRowsCount();
         verify(dao, times(0)).getAll(anyInt(), anyInt());
     }
 
     @Test
+    public void testGetByIdShouldReturnTagWhenTagExists() {
+        //when
+        when(dao.getById(1L)).thenReturn(Optional.of(tags.get(0)));
+        when(modelMapper.map(any(), any())).thenReturn((tagsDto.get(0)));
+        //then
+        assertEquals(tagsDto.get(0), service.getById(1L));
+        verify(dao, times(1)).getById(anyLong());
+        verify(modelMapper, times(1)).map(any(), any());
+    }
+
+    @Test
+    public void testGetByIdShouldTrowExceptionWhenTagNotExists() {
+        //when
+        when(dao.getById(anyLong())).thenReturn(Optional.empty());
+        //then
+        assertThrows(EntityNotFoundException.class, () -> service.getById(anyLong()));
+        verify(dao, times(1)).getById(anyLong());
+        verify(modelMapper, times(0)).map(any(), any());
+    }
+
+    @Test
     void testGetRowCountsShouldReturnCountRowsInTable() {
+        //when
         when(dao.getRowsCount()).thenReturn(1L);
+        //then
         assertEquals(service.getRowCounts(), 1L);
         verify(dao, times(1)).getRowsCount();
     }
 
     @Test
     void testSaveShouldReturnTagId() {
+        //when
+        doNothing().when(tagValidator).validateTag(any(TagDto.class));
         when(modelMapper.map(tagsDto.get(0), Tag.class)).thenReturn(tags.get(0));
         when(dao.save(tags.get(0))).thenReturn(1L);
-        doNothing().when(tagValidator).isTagValid(any(TagDto.class));
-        assertEquals(service.save(tagsDto.get(0)), 1L);
+        //then
+        assertEquals(1L, service.save(tagsDto.get(0)));
         verify(dao, times(1)).save(any(Tag.class));
+        verify(modelMapper, times(1)).map(any(), any());
     }
 
     @Test
     void testSaveShouldThrowExceptionWhenTagNameEmpty() {
-        doThrow(TagValidationException.class).when(tagValidator).isTagValid(tagsDto.get(0));
+        //when
+        doThrow(TagValidationException.class).when(tagValidator).validateTag(tagsDto.get(0));
+        //then
         assertThrows(TagValidationException.class, () -> service.save(tagsDto.get(0)));
+        verify(tagValidator, times(1)).validateTag(any(TagDto.class));
         verify(dao, times(0)).save(any(Tag.class));
+        verify(modelMapper, times(0)).map(any(), any());
     }
 
     @Test
     public void delete() {
+        //when
         doNothing().when(dao).delete(anyLong());
         service.delete(anyLong());
+        //then
         verify(dao, times(1)).delete(anyLong());
+    }
+
+    @Test
+    public void testGetMostWidelyUsedTagShouldReturnMostUsedTag() {
+        // given
+        MostWidelyUsedTag mostWidelyUsedTag = new MostWidelyUsedTag(1L, "first", new BigDecimal("100"));
+        MostUsedTagDto mostUsedTagDto = new MostUsedTagDto(new TagDto(1L, "first"), new BigDecimal("100"));
+        //when
+        when(dao.getMostWildlyUsedTag(anyLong())).thenReturn(mostWidelyUsedTag);
+        when(modelMapper.map(any(), any())).thenReturn(mostUsedTagDto);
+        //then
+        assertEquals(mostUsedTagDto, service.getMostWidelyUsedTag(1L));
     }
 }
