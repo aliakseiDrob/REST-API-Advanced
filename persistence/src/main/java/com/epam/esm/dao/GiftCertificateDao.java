@@ -45,7 +45,8 @@ public interface GiftCertificateDao {
      *                 create date, can be empty
      * @return list of GiftCertificates from database
      */
-    List<GiftCertificate> findByTagNames(Set<String> names, String nameSort, String dateSort);
+    List<GiftCertificate> findByTagNames(Set<String> names, String nameSort, String dateSort,
+                                         int page,int items);
 
     /**
      * finds amount rows in database
@@ -64,7 +65,8 @@ public interface GiftCertificateDao {
      *                              by create date  can be empty
      * @return list of GiftCertificate from database
      */
-    List<GiftCertificate> findByNameOrDescription(String partNameOrDescription, String nameSort, String dateSort);
+    List<GiftCertificate> findByNameOrDescription(String partNameOrDescription, String nameSort,
+                                                  String dateSort,int page,int items);
 
     /**
      * Finds all  records GiftCertificate from database by part name or description or Tag name
@@ -79,7 +81,8 @@ public interface GiftCertificateDao {
      */
     List<GiftCertificate> findByTagNameOrNameOrDescription(Set<String> names,
                                                            String nameOrDescription,
-                                                           String nameSort, String dateSort);
+                                                           String nameSort, String dateSort,
+                                                           int page, int items);
 
     /**
      * Saves  GiftCertificate in database

@@ -44,7 +44,7 @@ public class GiftCertificateController {
      */
     @GetMapping("/{id}")
     public CertificateDto getGiftCertificate(@PathVariable Long id) {
-            return service.getById(id);
+        return service.getById(id);
     }
 
     /**
@@ -74,8 +74,10 @@ public class GiftCertificateController {
     public List<CertificateDto> find(@RequestParam(required = false) Set<String> tagNames,
                                      @RequestParam(required = false, defaultValue = "") String partNameOrDesc,
                                      @RequestParam(required = false, defaultValue = "") String nameSort,
-                                     @RequestParam(required = false, defaultValue = "") String dateSort) {
-        return service.findByParameters(tagNames, partNameOrDesc, nameSort, dateSort);
+                                     @RequestParam(required = false, defaultValue = "") String dateSort,
+                                     @RequestParam(required = false, defaultValue = "1") int page,
+                                     @RequestParam(required = false, defaultValue = "10") int items) {
+        return service.findByParameters(tagNames, partNameOrDesc, nameSort, dateSort,page,items);
     }
 
     /**
@@ -86,7 +88,7 @@ public class GiftCertificateController {
      */
     @PatchMapping()
     public CertificateDto update(@RequestBody CertificateDto certificate) {
-            return service.update(certificate);
+        return service.update(certificate);
     }
 
     /**

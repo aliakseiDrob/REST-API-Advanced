@@ -71,6 +71,9 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public long save(CertificateDto certificateDto) {
+        if (certificateDto.getId() != 0) {
+            certificateDto.setId(0);
+        }
         certificateValidator.validateCertificateForSave(certificateDto);
         GiftCertificate giftCertificate = modelMapper.map(certificateDto, GiftCertificate.class);
         Set<Tag> certificateTags = tagDao.saveTags(giftCertificate.getTags());
@@ -83,9 +86,10 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     public List<CertificateDto> findByParameters(Set<String> tagNames,
                                                  String partOfNameOrDesc,
                                                  String nameSort,
-                                                 String dateSort) {
+                                                 String dateSort,
+                                                 int page, int items) {
         List<GiftCertificate> giftCertificates = getCertificates(tagNames,
-                partOfNameOrDesc, nameSort, dateSort);
+                partOfNameOrDesc, nameSort, dateSort, page, items);
         return giftCertificates.stream()
                 .map(certificate -> modelMapper.map(certificate, CertificateDto.class))
                 .collect(Collectors.toList());
@@ -93,17 +97,18 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
 
     private List<GiftCertificate> getCertificates(Set<String> tagNames,
                                                   String partOfNameOrDesc,
-                                                  String nameSort, String dateSort) {
+                                                  String nameSort, String dateSort, int page, int items) {
+       int startPosition = ServiceUtils.calculateStartPos(page, items);
         List<GiftCertificate> certificateList = new ArrayList<>();
 
         if (ServiceUtils.isTagNamesPassed(tagNames) && ServiceUtils.isParameterPassed(partOfNameOrDesc)) {
-            certificateList = giftCertificateDao.findByTagNameOrNameOrDescription(tagNames, partOfNameOrDesc, nameSort, dateSort);
+            certificateList = giftCertificateDao.findByTagNameOrNameOrDescription(tagNames, partOfNameOrDesc, nameSort, dateSort,startPosition, items);
         } else {
             if (ServiceUtils.isTagNamesPassed(tagNames)) {
-                certificateList = giftCertificateDao.findByTagNames(tagNames, nameSort, dateSort);
+                certificateList = giftCertificateDao.findByTagNames(tagNames, nameSort, dateSort,startPosition, items);
             }
             if (ServiceUtils.isParameterPassed(partOfNameOrDesc)) {
-                certificateList = giftCertificateDao.findByNameOrDescription(partOfNameOrDesc, nameSort, dateSort);
+                certificateList = giftCertificateDao.findByNameOrDescription(partOfNameOrDesc, nameSort, dateSort, startPosition, items);
             }
         }
         return certificateList;

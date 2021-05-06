@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "orders")
+@EqualsAndHashCode(exclude = {"id","certificate"})
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +27,13 @@ public class Order {
     @JoinColumn(name = "certificate_id", nullable = false)
     private GiftCertificate certificate;
 
+    public Order(long id, LocalDateTime orderDate, BigDecimal orderCost, User user) {
+        this.id = id;
+        this.orderDate = orderDate;
+        this.orderCost = orderCost;
+        this.user = user;
+    }
+
     @PrePersist
     private void setParameters() {
         setDate();
@@ -39,5 +47,15 @@ public class Order {
 
     private void setCost() {
         setOrderCost(getCertificate().getPrice());
+    }
+
+    @Override
+    public String toString() {
+        return "Order{" +
+                "id=" + id +
+                ", orderDate=" + orderDate +
+                ", orderCost=" + orderCost +
+                ", user=" + user +
+                '}';
     }
 }

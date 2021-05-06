@@ -50,11 +50,13 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public List<GiftCertificate> findByTagNames(Set<String> names, String nameSort, String dateSort) {
+    public List<GiftCertificate> findByTagNames(Set<String> names, String nameSort, String dateSort,int page,int items) {
         TypedQuery<GiftCertificate> query = entityManager
                 .createQuery(insertParametersInSql(defineConditions(names),
                         defineSortType(extractFieldsForSearch(nameSort, dateSort)), GET_CERTIFICATES_BY_TAG_NAME), GiftCertificate.class);
         query.setParameter("count", (long) names.size());
+        query.setFirstResult(page);
+        query.setMaxResults(items);
         setQueryParameters(query, names);
         return query.getResultList();
     }
@@ -121,10 +123,12 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public List<GiftCertificate> findByNameOrDescription(String partNameOrDescription, String nameSort, String dateSort) {
+    public List<GiftCertificate> findByNameOrDescription(String partNameOrDescription, String nameSort, String dateSort,int page,int items) {
         TypedQuery<GiftCertificate> query = entityManager.createQuery(insertSqlQuerySubString(
                 defineSortType(extractFieldsForSearch(nameSort, dateSort)), GET_CERTIFICATE_BY_PART_NAME_OR_DESCRIPTION), GiftCertificate.class);
         query.setParameter("text", prepareParameterForInsertingToSqlScript(partNameOrDescription));
+        query.setFirstResult(page);
+        query.setMaxResults(items);
         return query.getResultList();
     }
 
@@ -137,12 +141,14 @@ public class GiftCertificateDaoImpl implements GiftCertificateDao {
     }
 
     @Override
-    public List<GiftCertificate> findByTagNameOrNameOrDescription(Set<String> names, String nameOrDescription, String nameSort, String dateSort) {
+    public List<GiftCertificate> findByTagNameOrNameOrDescription(Set<String> names, String nameOrDescription, String nameSort, String dateSort, int page, int items) {
         TypedQuery<GiftCertificate> query = entityManager
                 .createQuery(insertParametersInSql(defineConditions(names),
                         defineSortType(extractFieldsForSearch(nameSort, dateSort)),
                         GET_CERTIFICATE_BY_TAG_NAME_OR_BY_PART_NAME_OR_DESCRIPTION), GiftCertificate.class);
         query.setParameter("text", prepareParameterForInsertingToSqlScript(nameOrDescription));
+        query.setFirstResult(page);
+        query.setMaxResults(items);
         setQueryParameters(query, names);
         return query.getResultList();
     }

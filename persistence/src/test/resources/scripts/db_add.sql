@@ -1,7 +1,7 @@
 DROP TABLE IF EXISTS gift_certificate;
 DROP TABLE IF EXISTS tag;
 DROP TABLE IF EXISTS gift_certificate_tag;
-DROP TABLE IF EXISTS user;
+DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS orders;
 
 CREATE TABLE  gift_certificate
@@ -32,9 +32,20 @@ CREATE TABLE  gift_certificate_tag
     FOREIGN KEY (gift_certificate_id) REFERENCES gift_certificate (id) ON DELETE CASCADE,
     FOREIGN KEY (tag_id) REFERENCES tag (id) ON DELETE CASCADE
 ) ;
-CREATE TABLE  user
+CREATE TABLE  users
 (
     `id`   BIGINT      NOT NULL AUTO_INCREMENT,
     `name` VARCHAR(45) unique not null,
     primary key (id)
+);
+CREATE TABLE `orders`
+(
+    `id`   BIGINT      NOT NULL AUTO_INCREMENT,
+    `date` timestamp NOT NULL,
+    `order_cost` DECIMAL(6,2) NOT NULL,
+    `user_id` BIGINT,
+    `certificate_id` bigint,
+    primary key (id),
+    FOREIGN KEY (user_id) REFERENCES users (id),
+    FOREIGN KEY (certificate_id) references gift_certificate (id)
 );

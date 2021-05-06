@@ -9,7 +9,8 @@ import java.util.Set;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "\"user\"")
+@Table(name = "users")
+@EqualsAndHashCode(exclude = {"id", "orders"})
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,5 +34,13 @@ public class User {
 
     public User(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

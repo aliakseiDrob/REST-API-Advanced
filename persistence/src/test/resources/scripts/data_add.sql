@@ -13,6 +13,10 @@ VALUES (1, 1),
        (1,2),
        (2,2),
        (1,4);
-INSERT INTO user (name)
+INSERT INTO users (name)
 VALUES ('Ivan'),
        ('Petr');
+INSERT INTO `orders` (date,order_cost,user_id,certificate_id)
+VALUES ('2021-03-24 20:11:10',340,1,1),
+       ('2021-03-30 20:11:10',100,1,1),
+       ('2021-03-24 20:11:10',100,2,2);

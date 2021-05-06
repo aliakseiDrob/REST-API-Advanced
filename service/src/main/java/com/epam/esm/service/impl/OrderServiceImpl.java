@@ -41,6 +41,9 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public long createOrder(OrderDto order) {
+        if (order.getId() != 0) {
+            order.setId(0);
+        }
         orderValidator.validateOrder(order);
         Order savedOrder = orderDao.createOrder(modelMapper.map(order, Order.class));
         return savedOrder.getId();

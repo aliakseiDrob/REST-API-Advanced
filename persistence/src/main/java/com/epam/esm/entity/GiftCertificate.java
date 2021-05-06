@@ -66,6 +66,17 @@ public class GiftCertificate {
         this.lastUpdateDate = lastUpdateDate;
     }
 
+    public GiftCertificate(String name, String description, BigDecimal price,
+                           int duration, int isAvailable, LocalDateTime createDate, LocalDateTime lastUpdateDate) {
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.isAvailable = isAvailable;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+    }
+
     @Override
     public String toString() {
         return "GiftCertificate{" +

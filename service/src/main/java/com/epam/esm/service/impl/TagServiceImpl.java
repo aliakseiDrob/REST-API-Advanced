@@ -17,6 +17,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,8 +61,12 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public long save(TagDto tagDto) {
         tagValidator.validateTag(tagDto);
+        if (tagDto.getId() != 0) {
+            tagDto.setId(0);
+        }
         Tag tag = modelMapper.map(tagDto, Tag.class);
         try {
             return tagDao.save(tag);
@@ -72,6 +77,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         tagDao.delete(id);
     }
@@ -79,11 +85,11 @@ public class TagServiceImpl implements TagService {
     @Override
     public MostUsedTagDto getMostWidelyUsedTag(Long userId) {
         MostWidelyUsedTag mostWidelyUsedTag = null;
-                try{
-                mostWidelyUsedTag= tagDao.getMostWildlyUsedTag(userId);}
-                catch(EmptyResultDataAccessException ex){
-                 throw new TagEntityException("Tag not found", 40406);
-                }
+        try {
+            mostWidelyUsedTag = tagDao.getMostWildlyUsedTag(userId);
+        } catch (EmptyResultDataAccessException ex) {
+            throw new TagEntityException("Tag not found", 40406);
+        }
         return modelMapper.map(mostWidelyUsedTag, MostUsedTagDto.class);
     }
 }

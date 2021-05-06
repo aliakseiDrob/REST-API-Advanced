@@ -69,9 +69,10 @@ public interface GiftCertificateService {
      * @return list of CertificatesDto
      */
     List<CertificateDto> findByParameters(@Nullable Set<String> tagNames,
-                                           @Nullable String partOfNameOrDesc,
-                                           @Nullable String nameSort,
-                                           @Nullable String dateSort);
+                                          @Nullable String partOfNameOrDesc,
+                                          @Nullable String nameSort,
+                                          @Nullable String dateSort,
+                                          int page, int items);
 
     /**
      * Updates  CertificateDto in database

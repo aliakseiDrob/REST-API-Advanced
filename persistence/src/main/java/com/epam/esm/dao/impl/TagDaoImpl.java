@@ -10,6 +10,7 @@ import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Repository
 public class TagDaoImpl implements TagDao {
@@ -42,14 +43,14 @@ public class TagDaoImpl implements TagDao {
 
     @Override
     public long save(Tag tag) {
-       entityManager.persist(tag);
-       return tag.getId();
+        entityManager.persist(tag);
+        return tag.getId();
     }
 
     @Override
     public void delete(Long id) {
-       Tag tag = entityManager.find(Tag.class,id);
-       entityManager.remove(tag);
+        Tag tag = entityManager.find(Tag.class, id);
+        entityManager.remove(tag);
     }
 
     @Override
@@ -58,6 +59,7 @@ public class TagDaoImpl implements TagDao {
         assignTagsIds(tags);
         return tags;
     }
+
     @Override
     public MostWidelyUsedTag getMostWildlyUsedTag(Long userId) {
 
@@ -74,16 +76,25 @@ public class TagDaoImpl implements TagDao {
                 .setParameter("userId", userId)
                 .getSingleResult();
     }
+
     private void saveNewTags(Set<Tag> tags) {
+        List<String> tagsNames =tags.stream().map(Tag::getName).collect(Collectors.toList());
         tags.stream()
-                .filter(tag -> !getAll().contains(tag))
+                .filter(tag -> !findTagsByName(tagsNames).contains(tag))
                 .forEach(tag -> tag.setId(save(tag)));
     }
 
     private void assignTagsIds(Set<Tag> tags) {
-        List<Tag> allTags = getAll();
+  List<String> tagsNames =tags.stream().map(Tag::getName).collect(Collectors.toList());
+        List<Tag> allTags = findTagsByName(tagsNames);
         tags.stream()
                 .filter(allTags::contains)
                 .forEach(tag -> tag.setId(allTags.get(allTags.indexOf(tag)).getId()));
+    }
+
+    private List<Tag> findTagsByName(List<String> tags) {
+       return entityManager.createQuery("SELECT t from Tag t where t.name IN :names", Tag.class)
+                .setParameter("names", tags)
+                .getResultList();
     }
 }
