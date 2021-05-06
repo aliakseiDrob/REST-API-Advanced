@@ -25,9 +25,11 @@ public class GiftCertificate {
     private BigDecimal price;
     @Column(nullable = false)
     private int duration;
-    @Column(nullable = false)
+    @Column(name = "is_available",nullable = false)
     private int isAvailable;
+    @Column(name="create_date")
     private LocalDateTime createDate;
+    @Column(name="last_update_date")
     private LocalDateTime lastUpdateDate;
 
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
@@ -62,5 +64,19 @@ public class GiftCertificate {
         this.isAvailable = isAvailable;
         this.createDate = createDate;
         this.lastUpdateDate = lastUpdateDate;
+    }
+
+    @Override
+    public String toString() {
+        return "GiftCertificate{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", price=" + price +
+                ", duration=" + duration +
+                ", isAvailable=" + isAvailable +
+                ", createDate=" + createDate +
+                ", lastUpdateDate=" + lastUpdateDate +
+                '}';
     }
 }
