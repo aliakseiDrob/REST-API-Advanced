@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import com.epam.esm.audit.AuditListener;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
@@ -11,7 +12,8 @@ import java.util.Set;
 @NoArgsConstructor
 @Table(name = "users")
 @EqualsAndHashCode(exclude = {"id", "orders"})
-public class User {
+@EntityListeners(AuditListener.class)
+public class User implements Identifiable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -42,5 +44,8 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+    public Long getId() {
+        return this.id;
     }
 }

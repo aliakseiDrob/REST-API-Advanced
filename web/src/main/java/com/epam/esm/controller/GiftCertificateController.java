@@ -29,7 +29,7 @@ public class GiftCertificateController {
      * @param items number of CertificatesDto on page
      * @return the list of CertificatesDto
      */
-    @GetMapping()
+    @GetMapping
     public CollectionModel<CertificateDto> getAll(@RequestParam(required = false, defaultValue = "1") int page,
                                                   @RequestParam(required = false, defaultValue = "10") int items) {
         List<CertificateDto> certificates = service.getAll(page, items);
@@ -53,7 +53,7 @@ public class GiftCertificateController {
      * @param certificate CertificateDto entity
      * @return CertificateDto id
      */
-    @PostMapping()
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public long save(@RequestBody CertificateDto certificate) {
         return service.save(certificate);
@@ -86,7 +86,7 @@ public class GiftCertificateController {
      * @param certificate CertificateDto entity
      * @return CertificateDto
      */
-    @PatchMapping()
+    @PatchMapping
     public CertificateDto update(@RequestBody CertificateDto certificate) {
         return service.update(certificate);
     }

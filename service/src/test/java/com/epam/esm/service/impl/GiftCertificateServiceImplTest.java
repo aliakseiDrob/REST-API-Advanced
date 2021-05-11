@@ -229,7 +229,7 @@ public class GiftCertificateServiceImplTest {
     @Test
     public void testUpdateShouldThrowExceptionIfCertificateNotExists() {
         doNothing().when(certificateValidator).validateCertificateForUpdate(certificatesDto.get(0));
-        when(giftCertificateDao.getById(1L)).thenReturn(Optional.empty());
+        when(giftCertificateDao.getById(anyLong())).thenReturn(Optional.empty());
         assertThrows(EntityNotFoundException.class, () -> service.update(certificatesDto.get(0)));
     }
 
@@ -285,37 +285,37 @@ public class GiftCertificateServiceImplTest {
 
     @Test
     public void testFindShouldReturnEmptyListWhenParametersNotPassed() {
-        assertEquals(service.findByParameters(new HashSet<>(), EMPTY_STRING, EMPTY_STRING, EMPTY_STRING), new ArrayList<>());
+        assertEquals(service.findByParameters(new HashSet<>(), EMPTY_STRING, EMPTY_STRING, EMPTY_STRING,1,4), new ArrayList<>());
         verifyNoInteractions(giftCertificateDao);
         verifyNoInteractions(tagDao);
     }
 
     @Test
     public void testFindShouldReturnListCertificateDtoWhenTagNamesPassed() {
-        when(giftCertificateDao.findByTagNames(Collections.singleton("name"), "nameSort", "dateSort")).thenReturn(certificates);
+        when(giftCertificateDao.findByTagNames(Collections.singleton("name"), "nameSort", "dateSort",0,4)).thenReturn(certificates);
         when(modelMapper.map(certificates.get(0), CertificateDto.class)).thenReturn(certificatesDto.get(0));
         when(modelMapper.map(certificates.get(1), CertificateDto.class)).thenReturn(certificatesDto.get(1));
-        assertEquals(service.findByParameters(Collections.singleton("name"), EMPTY_STRING, "nameSort", "dateSort"), certificatesDto);
+        assertEquals(service.findByParameters(Collections.singleton("name"), EMPTY_STRING, "nameSort", "dateSort",1,4), certificatesDto);
         verifyNoMoreInteractions(giftCertificateDao);
         verifyNoMoreInteractions(tagDao);
     }
 
     @Test
     public void testFindShouldReturnListCertificateDtoWhenPartNameOrDescriptionPassed() {
-        when(giftCertificateDao.findByNameOrDescription(PART_NAME_OR_DESCRIPTION, "nameSort", "dateSort")).thenReturn(certificates);
+        when(giftCertificateDao.findByNameOrDescription(PART_NAME_OR_DESCRIPTION, "nameSort", "dateSort",0,4)).thenReturn(certificates);
         when(modelMapper.map(certificates.get(0), CertificateDto.class)).thenReturn(certificatesDto.get(0));
         when(modelMapper.map(certificates.get(1), CertificateDto.class)).thenReturn(certificatesDto.get(1));
-        assertEquals(service.findByParameters(new HashSet<>(), PART_NAME_OR_DESCRIPTION, "nameSort", "dateSort"), certificatesDto);
+        assertEquals(service.findByParameters(new HashSet<>(), PART_NAME_OR_DESCRIPTION, "nameSort", "dateSort",1,4), certificatesDto);
         verifyNoMoreInteractions(giftCertificateDao);
         verifyNoMoreInteractions(tagDao);
     }
 
     @Test
     public void testFindShouldReturnListCertificateDtoWhenTagNameAndPartNameOrDescriptionPassed() {
-        when(giftCertificateDao.findByTagNameOrNameOrDescription(Collections.singleton("name"), PART_NAME_OR_DESCRIPTION, "nameSort", "dateSort")).thenReturn(certificates);
+        when(giftCertificateDao.findByTagNameOrNameOrDescription(Collections.singleton("name"), PART_NAME_OR_DESCRIPTION, "nameSort", "dateSort",0,4)).thenReturn(certificates);
         when(modelMapper.map(certificates.get(0), CertificateDto.class)).thenReturn(certificatesDto.get(0));
         when(modelMapper.map(certificates.get(1), CertificateDto.class)).thenReturn(certificatesDto.get(1));
-        assertEquals(service.findByParameters(Collections.singleton("name"), PART_NAME_OR_DESCRIPTION, "nameSort", "dateSort"), certificatesDto);
+        assertEquals(service.findByParameters(Collections.singleton("name"), PART_NAME_OR_DESCRIPTION, "nameSort", "dateSort",1,4), certificatesDto);
         verifyNoMoreInteractions(giftCertificateDao);
         verifyNoMoreInteractions(tagDao);
     }

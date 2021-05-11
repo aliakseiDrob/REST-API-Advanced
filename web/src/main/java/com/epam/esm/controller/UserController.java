@@ -49,7 +49,7 @@ public class UserController {
      * @param items number of usersDto on page
      * @return the list of usersDto
      */
-    @GetMapping()
+    @GetMapping
     public CollectionModel<UserDto> getAll(@RequestParam(required = false, defaultValue = "1") int page,
                                            @RequestParam(required = false, defaultValue = "10") int items) {
         List<UserDto> users = userService.getAll(page, items);

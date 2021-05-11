@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import com.epam.esm.audit.AuditListener;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Table(name = "orders")
 @EqualsAndHashCode(exclude = {"id","certificate"})
-public class Order {
+@EntityListeners(AuditListener.class)
+public class Order implements Identifiable{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
@@ -57,5 +59,8 @@ public class Order {
                 ", orderCost=" + orderCost +
                 ", user=" + user +
                 '}';
+    }
+    public Long getId() {
+        return this.id;
     }
 }

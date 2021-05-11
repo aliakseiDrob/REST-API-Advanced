@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import com.epam.esm.audit.AuditListener;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
 
@@ -13,8 +14,9 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(exclude = {"tags","lastUpdateDate"})
-public class GiftCertificate {
+@EqualsAndHashCode(exclude = {"tags", "lastUpdateDate"})
+@EntityListeners(AuditListener.class)
+public class GiftCertificate implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,11 +27,11 @@ public class GiftCertificate {
     private BigDecimal price;
     @Column(nullable = false)
     private int duration;
-    @Column(name = "is_available",nullable = false)
+    @Column(name = "is_available", nullable = false)
     private int isAvailable;
-    @Column(name="create_date")
+    @Column(name = "create_date")
     private LocalDateTime createDate;
-    @Column(name="last_update_date")
+    @Column(name = "last_update_date")
     private LocalDateTime lastUpdateDate;
 
     @ManyToMany(cascade = {CascadeType.MERGE}, fetch = FetchType.EAGER)
@@ -89,5 +91,9 @@ public class GiftCertificate {
                 ", createDate=" + createDate +
                 ", lastUpdateDate=" + lastUpdateDate +
                 '}';
+    }
+
+    public Long getId() {
+        return this.id;
     }
 }

@@ -39,6 +39,7 @@ public class TagDaoImplTest {
     @Autowired
     TagDao tagDao;
 
+
     private static void setTagInstanceForSave() {
         setTagsForSave = new HashSet<>();
         setTagsForSave.add(new Tag("third"));
@@ -92,8 +93,10 @@ public class TagDaoImplTest {
     @Test
     @Rollback
     void TestDeleteShouldDeleteTag() {
+        //given
+        Tag tag = tagDao.getById(TAG_ID).get();
         //when
-        tagDao.delete(TAG_ID);
+        tagDao.delete(tag);
         //then
         assertEquals(TAG_LIST_AFTER_DELETE_TAG, tagDao.getAll());
     }
@@ -104,6 +107,7 @@ public class TagDaoImplTest {
         //when
         setTagInstanceForSave();
         setTagInstanceAfterSave();
+
         //then
         assertEquals(tagDao.saveTags(setTagsForSave), setTagsForSave);
         assertEquals(tagDao.getAll(), listTagsAfterSaveInDb);

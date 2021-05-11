@@ -3,7 +3,7 @@ DROP TABLE IF EXISTS tag;
 DROP TABLE IF EXISTS gift_certificate_tag;
 DROP TABLE IF EXISTS users;
 DROP TABLE IF EXISTS orders;
-
+DROP TABLE IF EXISTS audit;
 CREATE TABLE  gift_certificate
 (
     `id`               BIGINT        NOT NULL AUTO_INCREMENT,
@@ -49,3 +49,11 @@ CREATE TABLE `orders`
     FOREIGN KEY (user_id) REFERENCES users (id),
     FOREIGN KEY (certificate_id) references gift_certificate (id)
 );
+CREATE TABLE audit
+(
+    `id`               BIGINT        NOT NULL AUTO_INCREMENT,
+    `operation`             VARCHAR(50)   NOT NULL ,
+    `date`      timestamp,
+    `entity` varchar(250),
+    primary key (id)
+)

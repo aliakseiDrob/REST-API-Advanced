@@ -48,8 +48,7 @@ public class TagDaoImpl implements TagDao {
     }
 
     @Override
-    public void delete(Long id) {
-        Tag tag = entityManager.find(Tag.class, id);
+    public void delete(Tag tag) {
         entityManager.remove(tag);
     }
 
@@ -78,14 +77,14 @@ public class TagDaoImpl implements TagDao {
     }
 
     private void saveNewTags(Set<Tag> tags) {
-        List<String> tagsNames =tags.stream().map(Tag::getName).collect(Collectors.toList());
+        List<String> tagsNames = tags.stream().map(Tag::getName).collect(Collectors.toList());
         tags.stream()
                 .filter(tag -> !findTagsByName(tagsNames).contains(tag))
                 .forEach(tag -> tag.setId(save(tag)));
     }
 
     private void assignTagsIds(Set<Tag> tags) {
-  List<String> tagsNames =tags.stream().map(Tag::getName).collect(Collectors.toList());
+        List<String> tagsNames = tags.stream().map(Tag::getName).collect(Collectors.toList());
         List<Tag> allTags = findTagsByName(tagsNames);
         tags.stream()
                 .filter(allTags::contains)
@@ -93,7 +92,7 @@ public class TagDaoImpl implements TagDao {
     }
 
     private List<Tag> findTagsByName(List<String> tags) {
-       return entityManager.createQuery("SELECT t from Tag t where t.name IN :names", Tag.class)
+        return entityManager.createQuery("SELECT t from Tag t where t.name IN :names", Tag.class)
                 .setParameter("names", tags)
                 .getResultList();
     }

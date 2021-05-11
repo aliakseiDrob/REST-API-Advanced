@@ -1,5 +1,6 @@
 package com.epam.esm.entity;
 
+import com.epam.esm.audit.AuditListener;
 import lombok.*;
 
 import javax.persistence.*;
@@ -19,7 +20,8 @@ import java.util.Set;
                                 @ColumnResult(name = "tag_name", type = String.class),
                                 @ColumnResult(name = "highest_cost", type = BigDecimal.class)
                         })})
-public class Tag {
+@EntityListeners(AuditListener.class)
+public class Tag implements Identifiable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,5 +46,9 @@ public class Tag {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    public Long getId() {
+        return this.id;
     }
 }

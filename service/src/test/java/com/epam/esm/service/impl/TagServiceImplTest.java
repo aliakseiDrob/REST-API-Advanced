@@ -151,10 +151,11 @@ public class TagServiceImplTest {
     @Test
     public void delete() {
         //when
-        doNothing().when(dao).delete(anyLong());
+        doNothing().when(dao).delete(any(Tag.class));
+        when(dao.getById(anyLong())).thenReturn(Optional.of(tags.get(0)));
         service.delete(anyLong());
         //then
-        verify(dao, times(1)).delete(anyLong());
+        verify(dao, times(1)).delete(any(Tag.class));
     }
 
     @Test

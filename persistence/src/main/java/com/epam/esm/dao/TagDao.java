@@ -54,9 +54,9 @@ public interface TagDao {
     /**
      * Removes  Tag from database
      *
-     * @param id Tag id
+     * @param tag Tag entity
      */
-    void delete(Long id);
+    void delete(Tag tag);
 
     /**
      * Saves  set of Tags in database

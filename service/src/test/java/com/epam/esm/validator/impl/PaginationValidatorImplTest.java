@@ -36,16 +36,4 @@ public class PaginationValidatorImplTest {
                 () -> paginationValidator.validatePaginationPage(VALID_PAGE_VALUE, INVALID_ITEMS_ON_PAGE_VALUE, ONE_ROW_COUNT));
     }
 
-    @Test
-    public void testIsPaginationParametersValidShouldReturnTrueWhenParamValid() {
-        //then
-        assertTrue(paginationValidator.isPaginationParametersValid(VALID_PAGE_VALUE, VALID_ITEMS_ON_PAGE_VALUE));
-    }
-
-    @Test
-    public void testIsPaginationParametersValidShouldReturnTrueWhenParamNotValid() {
-        //then
-        assertFalse(paginationValidator.isPaginationParametersValid(INVALID_PAGE_VALUE, INVALID_ITEMS_ON_PAGE_VALUE));
-    }
-
 }

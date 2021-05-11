@@ -53,6 +53,7 @@ public class ControllerExceptionAdviser extends ResponseEntityExceptionHandler {
     @ExceptionHandler({RuntimeException.class})
     public ResponseEntity<Object> handleUnregisterException(Exception ex,Locale locale) {
         System.out.println(ex);
+        System.out.println(ex.getMessage());
         return createResponseEntity(50001,locale,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

@@ -38,7 +38,7 @@ public class AddDataController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addTagsToDb() {
         Faker faker = new Faker();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 10000; i++) {
             try {
                 tagService.save(new TagDto(faker.food().ingredient() +
                         " " +
@@ -55,7 +55,7 @@ public class AddDataController {
     @ResponseStatus(HttpStatus.CREATED)
     public void addUsersToDb() {
         Faker faker = new Faker();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             try {
                 userService.save(new UserDto(faker.name().fullName()));
                 LOGGER.info(i + " user created");
@@ -71,7 +71,7 @@ public class AddDataController {
     public void addCertificatesToDb() {
         Faker faker = new Faker();
         List<TagDto> allTags = tagService.getAll();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             try {
                 giftCertificateService.save(createCertificate(allTags, faker));
                 LOGGER.info(i + " certificate created");
@@ -106,7 +106,7 @@ public class AddDataController {
         Faker faker = new Faker();
         List<UserDto> allUsers = userService.getAll();
         List<CertificateDto> allCertificates = giftCertificateService.getAll();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 1000; i++) {
             try {
                 orderService.createOrder(createFakeOrder(allUsers, allCertificates, faker));
                 LOGGER.info(i + " order created");

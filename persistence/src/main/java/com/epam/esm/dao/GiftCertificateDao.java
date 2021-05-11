@@ -36,7 +36,7 @@ public interface GiftCertificateDao {
     Optional<GiftCertificate> getById(Long id);
 
     /**
-     * Finds all  records GiftCertificate from database by Tag name
+     * Finds all  records GiftCertificate from database by Tags name
      *
      * @param names    names of Tags
      * @param nameSort is used to sort the result-set in ascending or descending order

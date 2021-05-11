@@ -79,7 +79,8 @@ public class TagServiceImpl implements TagService {
     @Override
     @Transactional
     public void delete(Long id) {
-        tagDao.delete(id);
+        Tag tag = tagDao.getById(id).orElseThrow(() -> new EntityNotFoundException("Tag not found", 40402));
+        tagDao.delete(tag);
     }
 
     @Override

@@ -1,11 +1,9 @@
 package com.epam.esm.config;
 
-import org.springframework.core.io.Resource;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.support.PropertiesLoaderUtils;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -25,7 +23,7 @@ import java.util.Properties;
 @ComponentScan(basePackages = "com.epam.esm.dao")
 @EnableTransactionManagement
 public class TestConfig {
-    private static final String HIBERNATE_PROPS = "classpath:properties/hibernate.properties";
+
     @Bean
     public DataSource dataSource() {
         EmbeddedDatabaseBuilder databaseBuilder = new EmbeddedDatabaseBuilder();
@@ -61,7 +59,7 @@ public class TestConfig {
     @Bean
     public EntityManagerFactory entityManagerFactory() throws IOException {
         LocalContainerEntityManagerFactoryBean factoryBean = new LocalContainerEntityManagerFactoryBean();
-        factoryBean.setPackagesToScan("com.epam.esm.entity");
+        factoryBean.setPackagesToScan("com.epam.esm");
         factoryBean.setDataSource(dataSource());
         factoryBean.setJpaProperties(hibernateProperties());
         factoryBean.setJpaVendorAdapter(jpaVendorAdapter());

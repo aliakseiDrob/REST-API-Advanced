@@ -8,13 +8,14 @@ import org.springframework.stereotype.Component;
 public class PaginationValidatorImpl implements PaginationValidator {
     @Override
     public void validatePaginationPage(int page, int items, long rowsCount) {
-        if (!(isPaginationParametersValid(page, items) && (page - 1) * items < rowsCount)) {
+        if (page < 1) {
+            throw new PaginationPageException("Incorrect page number", 40014);
+        }
+        if (items < 1) {
+            throw new PaginationPageException("Incorrect items number", 40015);
+        }
+        if ((page - 1) * items > rowsCount) {
             throw new PaginationPageException("Page not exists", 40405);
         }
-    }
-
-    //package access for testing
-   boolean isPaginationParametersValid(int page, int items) {
-        return page > 0 && items > 0;
     }
 }

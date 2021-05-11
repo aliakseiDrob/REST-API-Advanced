@@ -28,7 +28,7 @@ public class TagController {
      * @param items number of TagDto on page
      * @return the list of TagDto
      */
-    @GetMapping()
+    @GetMapping
     public CollectionModel<TagDto> getAll(@RequestParam(required = false, defaultValue = "1") int page,
                                           @RequestParam(required = false, defaultValue = "10") int items) {
         List<TagDto> tags = tagService.getAll(page, items);
