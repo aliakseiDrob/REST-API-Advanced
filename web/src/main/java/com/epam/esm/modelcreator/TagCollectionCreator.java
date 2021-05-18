@@ -4,7 +4,6 @@ import com.epam.esm.controller.TagController;
 import com.epam.esm.dto.TagDto;
 import com.epam.esm.service.TagService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.stereotype.Component;
 

@@ -9,7 +9,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.HashMap;
@@ -50,10 +52,13 @@ public class ControllerExceptionAdviser extends ResponseEntityExceptionHandler {
         return createResponseEntity(ex.getCode(),locale,HttpStatus.BAD_REQUEST);
     }
 
+    @Override
+    protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        return createResponseEntity(40405,request.getLocale(),HttpStatus.BAD_REQUEST);
+    }
+
     @ExceptionHandler({RuntimeException.class})
-    public ResponseEntity<Object> handleUnregisterException(Exception ex,Locale locale) {
-        System.out.println(ex);
-        System.out.println(ex.getMessage());
+    public ResponseEntity<Object> handleUnregisterException(Locale locale) {
         return createResponseEntity(50001,locale,HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
